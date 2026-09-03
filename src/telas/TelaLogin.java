@@ -11,7 +11,9 @@ package telas;
 public class TelaLogin extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaLogin.class.getName());
-
+    
+    private static final String usuario = "Eloah";
+    private static final String senha = "1601";
     /**
      * Creates new form TelaLogin
      */
@@ -103,7 +105,7 @@ public class TelaLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldUsuarioActionPerformed
 
     private void jButtonEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEntrarActionPerformed
-        // TODO add your handling code here:
+        if(jTextFieldUsuario.getText().equals(usuario) && jPassword)
     }//GEN-LAST:event_jButtonEntrarActionPerformed
 
     /**
