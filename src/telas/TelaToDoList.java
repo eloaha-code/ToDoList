@@ -4,6 +4,10 @@
  */
 package telas;
 
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Aluno
@@ -11,12 +15,25 @@ package telas;
 public class TelaToDoList extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaToDoList.class.getName());
+    
+    DefaultTableModel model;
+    
+    private static final String CONCLUIDA = "Concluída";
+    private static final String NAO_CONCLUIDA = "Não Concluída";
+    
+    
+    private final ArrayList<String> tarefas = new ArrayList<>();
+    private final ArrayList<String> tarefaFiltradas = new ArrayList<>();
 
     /**
      * Creates new form TelaToDoList
      */
     public TelaToDoList() {
         initComponents();
+        
+        setLocationRelativeTo(null);
+        
+        model = (DefaultTableModel) jTableTarefas.getModel();
     }
 
     /**
@@ -30,7 +47,7 @@ public class TelaToDoList extends javax.swing.JFrame {
 
         jTextFieldDescricaoTarefa = new javax.swing.JTextField();
         jButtonAdicionarTarefa = new javax.swing.JButton();
-        jComboBoxFiltroStatua = new javax.swing.JComboBox<>();
+        jComboBoxFiltroStatus = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableTarefas = new javax.swing.JTable();
         jButtonConcuirTarefa = new javax.swing.JButton();
@@ -41,8 +58,9 @@ public class TelaToDoList extends javax.swing.JFrame {
         jTextFieldDescricaoTarefa.addActionListener(this::jTextFieldDescricaoTarefaActionPerformed);
 
         jButtonAdicionarTarefa.setText("Adicionar");
+        jButtonAdicionarTarefa.addActionListener(this::jButtonAdicionarTarefaActionPerformed);
 
-        jComboBoxFiltroStatua.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Concluído", "Não Concluído" }));
+        jComboBoxFiltroStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Concluído", "Não Concluído" }));
 
         jTableTarefas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -76,7 +94,7 @@ public class TelaToDoList extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBoxFiltroStatua, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBoxFiltroStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jTextFieldDescricaoTarefa, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -96,14 +114,14 @@ public class TelaToDoList extends javax.swing.JFrame {
                     .addComponent(jTextFieldDescricaoTarefa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonAdicionarTarefa))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBoxFiltroStatua, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jComboBoxFiltroStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonConcuirTarefa)
-                    .addComponent(jButtonRemoverTarefa))
-                .addGap(9, 9, 9))
+                    .addComponent(jButtonRemoverTarefa)
+                    .addComponent(jButtonConcuirTarefa))
+                .addContainerGap())
         );
 
         pack();
@@ -113,6 +131,57 @@ public class TelaToDoList extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldDescricaoTarefaActionPerformed
 
+    private void jButtonAdicionarTarefaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAdicionarTarefaActionPerformed
+        if (jTextFieldDescricaoTarefa.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "A descrição da tarefa não pode ser vazia");
+            return;
+        }
+        
+        if (hasTarefaRepetida(jTextFieldDescricaoTarefa.getText())){
+            JOptionPane.showMessageDialog(null, "A trefa" + jTextFieldDescricaoTarefa.getText() + "Já existe!");
+            return;
+        }
+        
+        tarefas.add(jTextFieldDescricaoTarefa.getText() + ";" + NAO_CONCLUIDA);
+        
+        preencherTabela();
+        
+        jTextFieldDescricaoTarefa.setText("");
+    }//GEN-LAST:event_jButtonAdicionarTarefaActionPerformed
+
+    public boolean hasTarefaRepetida(String novaTarefa){
+        for (String tarefa : tarefas){
+            String dados[] = tarefa.split(";");
+            
+            if (novaTarefa.toLowerCase().equals(dados[0].toLowerCase())){
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private void preencherTabela(){
+        ArrayList<String> listaTarefas;
+        
+        if(jComboBoxFiltroStatus.getSelectedIndex() > 0){
+            listaTarefas = tarefaFiltradas;
+        }else{
+            listaTarefas = tarefas;
+        }
+        
+        model.setRowCount(0);
+        
+        for (String tarefa : listaTarefas){
+            String[] dados = tarefa.split(";");
+            
+            model.addRow(new Object[]{
+                dados[0],
+                dados[1]
+            });
+        }
+    }
+            
     /**
      * @param args the command line arguments
      */
@@ -142,7 +211,7 @@ public class TelaToDoList extends javax.swing.JFrame {
     private javax.swing.JButton jButtonAdicionarTarefa;
     private javax.swing.JButton jButtonConcuirTarefa;
     private javax.swing.JButton jButtonRemoverTarefa;
-    private javax.swing.JComboBox<String> jComboBoxFiltroStatua;
+    private javax.swing.JComboBox<String> jComboBoxFiltroStatus;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTableTarefas;
     private javax.swing.JTextField jTextFieldDescricaoTarefa;
