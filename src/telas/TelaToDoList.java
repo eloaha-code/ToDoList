@@ -61,6 +61,7 @@ public class TelaToDoList extends javax.swing.JFrame {
         jButtonAdicionarTarefa.addActionListener(this::jButtonAdicionarTarefaActionPerformed);
 
         jComboBoxFiltroStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Concluído", "Não Concluído" }));
+        jComboBoxFiltroStatus.addItemListener(this::jComboBoxFiltroStatusItemStateChanged);
 
         jTableTarefas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -194,6 +195,12 @@ public class TelaToDoList extends javax.swing.JFrame {
         
         preencherTabela();
     }//GEN-LAST:event_jButtonConcuirTarefaActionPerformed
+
+    private void jComboBoxFiltroStatusItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxFiltroStatusItemStateChanged
+       filtrarTabela();
+       
+       preencherTabela();
+    }//GEN-LAST:event_jComboBoxFiltroStatusItemStateChanged
 
     private void filtrarTabela(){
       int opcao = jComboBoxFiltroStatus.getSelectedIndex();
