@@ -1,0 +1,4 @@
+escutar musica;Concluída;08/10/2026 10:10
+tomar remadio;Não concluída;08/10/2026 10:11
+ir no banheiro;Não concluída;08/10/2026 10:11
+ver tiktok;Não concluída;08/10/2026 10:11

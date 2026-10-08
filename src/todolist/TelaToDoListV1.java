@@ -4,6 +4,10 @@
  */
 package todolist;
 
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -38,6 +42,10 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
         model.setRowCount(0);
         
         setTitle("Lista de Tarefas V2");
+        
+        carregarTarefas();
+        preencherTabela();
+        atualizarEstatisticas();
     }
 
     /**
@@ -227,7 +235,9 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         
         tarefas.add(jTextFieldDescricaoTarefa.getText() + ";" + NAO_CONCLUIDA + ";" + dataAtual.format(formato));
-
+        
+        salvarTarefa();
+    
         atualizarEstatisticas();
         
         preencherTabela();
@@ -250,6 +260,10 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
         String[] dados = tarefas.get(indiceTarefaSelecionada).split(";");
         
         tarefas.set(indiceTarefaSelecionada, dados[0] + ";" + CONCLUIDA + ";" + dados[2]);
+        
+        salvarTarefa();
+        
+        atualizarEstatisticas();
         
         filtrarTabela();
         
@@ -281,6 +295,8 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
             
             preencherTabela();
         }
+        
+        salvarTarefa();
         
         filtrarTabela();
         
@@ -368,8 +384,8 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
     private void atualizarEstatisticas(){
         jTextFieldTotal.setText(Integer.toString(tarefas.size()));
         
-        jTextFieldTotal.setText(String.valueOf(retornarTotalConcluidas()));
-         jTextFieldTotal.setText(String.valueOf(retornarTotalNaoConcluidas()));
+        jTextFieldConcluidas.setText(String.valueOf(retornarTotalConcluidas()));
+        jTextFieldNaoConcluidas.setText(String.valueOf(retornarTotalNaoConcluidas()));
     }
     
     private int retornarTotalConcluidas(){
@@ -399,6 +415,37 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
         
         return quantidadeNaoConcluida;
     }
+     
+    private void salvarTarefa(){
+        try{
+            FileWriter arquivo = new FileWriter("tarefas.txt");
+            
+            for (String tarefa : tarefas){
+                arquivo.write(tarefa + "\n");
+            }
+            
+            arquivo.close();
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Erro ao salvar as tarefas");
+        }
+    }
+    
+    private void carregarTarefas(){
+        try{
+            BufferedReader arquivo = new BufferedReader(new FileReader("tarefas.txt"));
+            
+            String tarefa;
+            
+            while((tarefa = arquivo.readLine()) != null){
+                tarefas.add(tarefa);
+            }
+            
+            arquivo.close();
+        }catch(Exception e){
+        
+        }
+    }
+            
     /**
      * @param args the command line arguments
      */
